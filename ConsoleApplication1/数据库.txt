@@ -1,0 +1,35 @@
+
+create table student
+(
+ ID varchar(10),
+ SNAME varchar(20),
+ SEX varchar(5),
+ INTOSCHOOL_AGE varchar(10),
+ INTOSCHOOL_YEAR varchar(10),
+ CLASS varchar(10));
+
+create table course
+(
+ID varchar(7),
+CNAME varchar(10),
+TEACHER_ID varchar(5),
+SCORE varchar(10),
+GRADE varchar(10),
+YEAR_QUIT varchar(10));
+
+
+create table choose
+(
+STUDENT_ID varchar(10),
+COURSE_ID varchar(7),
+TEACHER_ID varchar(5),
+CHOOSE_YEAR varchar(10),
+SCORE varchar(10)
+)；
+
+CREATE TABLE teacher
+(
+ID VARCHAR(5),
+TNAME VARCHAR(20),
+CLASS_TEACH VARCHAR(20)
+);

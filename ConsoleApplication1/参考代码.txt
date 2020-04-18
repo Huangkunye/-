@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include<string>
+#include<iostream>
+#include<Windows.h>
+#include<mysql.h>
+#include "mysql.h"
+using namespace std;
+int main(void)
+{
+	MYSQL mysql;//数据库结构体
+	MYSQL_RES* res;//结果集结构体
+	MYSQL_ROW row;//二维数组
+	mysql_init(&mysql);
+	//这里的话最好使用gbk，如果表中有中文utf8会出乱码
+	mysql_options(&mysql, MYSQL_SET_CHARSET_NAME, "gbk");
+	//这里填自己的服务名，用户名，密码，选择的数据库，端口号应该都是3306不用修改
+	if (mysql_real_connect(&mysql, "localhost", "root", "kunye123", "test", 3306, NULL, 0) == NULL)
+		printf("连接失败！\n");
+	//选择查看的表
+
+	//插入数据
+	//mysql_query(&mysql, "truncate table student");//删除表中所有数据
+	string SqlText;
+	string id = "2020";
+	SqlText = "insert into Student(id,sname,sex,intoschool_age,intoschool_year,class) values('"+id+"','昆烨','男','18','2018','二班');";//主键相同，避免重复
+	mysql_query(&mysql, SqlText.c_str());//将上面语句转为mysql语句
+
+	mysql_query(&mysql, "select * from Student");//查询数据
+	res = mysql_store_result(&mysql);//获取结果集
+	printf_s("ID\t姓名\t性别\t入学年龄\t入学年份\t班级 \n");
+	while (row = mysql_fetch_row(res))
+	{
+		printf_s("%s  ", row[0]);
+		printf_s("\t%s  ", row[1]);
+		printf_s("\t%s  ", row[2]);
+		printf_s("\t%s  ", row[3]);
+		printf_s("\t%s  ", row[4]);
+		printf_s("\t%s  \n", row[5]);
+	}
+	mysql_free_result(res);//释放结果集
+	mysql_close(&mysql);//关闭数据库
+	system("pause");
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+create table customer
+	(	customer-name	   char(20)	not null,
+		customer-street	   char(30),
+		customer-city	   char(30),
+		primary key (customer-name)
+                                foreign key()references tablename;
+);
+
+
+
+select distinct customer-name	from customer	order by customer-city asc,                   customer-name desc
+
+
+
+
+
+
+
+
+void student_keydown()
+{
+	int choice = 0;
+	struct student data;
+	cin >> choice;
+	switch (choice)
+	{
+	case 0:
+	{
+		cout << "......录入信息........" << endl;
+		cout << "输入学生证，姓名，性别，入学年龄，入学年份，班级" << endl;
+		fflush(stdin);//清除缓冲区
+		cin >> data.id >> data.name >> data.sex >> data.intoschool_age >> data.intoschool_year >> data.cls;
+		/*if (data.intoschool_age < 10 || data.intoschool_age>50)
+		{
+			cout << "入学年龄在10-50岁之间，请重新输入" << endl;
+			int newintoschool_age;
+			cin >> newintoschool_age;
+			data.intoschool_age = newintoschool_age;
+		}*/
+		insertnode(list, data);
+		writefile(list, "student.txt");
+
+		string sqltext;
+		string sql_id = data.id;
+		string sql_name = data.name;
+		string sql_sex = data.sex;
+		string sql_intoschool_age = data.intoschool_age;
+		string sql_intoschool_year = data.intoschool_year;
+		string sql_cls = data.cls;
+		sqltext = "insert into student(id,sname,sex,intoschool_age,intoschool_year,class) values('" + sql_id + "','" + sql_name + "','" + sql_sex + "','"+sql_intoschool_age+"','"+sql_intoschool_year+"','"+sql_cls+"');";//主键相同，避免重复
+		mysql_query(&mysql, sqltext.c_str());//将上面语句转为mysql语句
+		
+		break;
+	}
+	case 1:
+	{
+		cout << "......浏览信息........" << endl;
+		printlist(list);
+		/*mysql_query(&mysql, "select * from student");
+		res = mysql_store_result(&mysql);
+		cout << "学生id\t姓名\t性别\t入学年龄\t入学年份\t班级\n";
+		while (row = mysql_fetch_row(res))
+		{
+			cout << row[0] << "\t" << row[1] << "\t" << row[2] << "\t" << row[3] << "\t" << row[4] << "\t" << row[5] << endl;
+		}
+		mysql_free_result(res);*/
+		break;
+	}
+	case 2:
+	{
+		cout << "......删除信息........" << endl;
+		cout << "输入删除的学生id：";
+		cin >> data.id;
+		deletelist(list, data.id);
+		writefile(list, "student.txt");
+		string sql_id = data.id;
+		string sql_de = "delete from student where id = '" + sql_id + "'";
+		mysql_query(&mysql, sql_de.c_str());
+		cout << "删除成功" << endl;
+		break;
+	}
+	case 3:
+	{
+		cout << "......查找信息........" << endl;
+		cout << "输入要找的学生id:";
+		cin >> data.id;
+		if (search(list, data.id) == NULL) {
+			cout << "没有相关信息,显示全部学生信息" << endl;
+			printlist(list);
+		}
+		else {
+			cout << "学生id\t姓名\t性别\t入学年龄\t入学年份\t班级\n";
+			cout << search(list, data.id)->data.id << "\t" << search(list, data.id)->data.name << "\t" << search(list, data.id)->data.sex << "\t    " << search(list, data.id)->data.intoschool_age << "\t\t" << search(list, data.id)->data.intoschool_year << "\t\t" << search(list, data.id)->data.cls << endl;
+		}//数据库操作
+		/*string sql_id = data.id;
+		string sql_serach = "select * from student where id ='" + sql_id+ "'";
+		mysql_query(&mysql, sql_serach.c_str());
+		res = mysql_store_result(&mysql);
+		cout << "学生id\t姓名\t性别\t入学年龄\t入学年份\t班级\n";
+		while (row = mysql_fetch_row(res))
+		{
+			cout << row[0] << "\t" << row[1] << "\t" << row[2] << "\t" << row[3] << "\t" << row[4] << "\t" << row[5] << endl;
+		}
+		mysql_free_result(res);*/
+		break;
+	}
+	case 4:
+	{
+		cout << "......修改信息........" << endl;
+		cout << "输入修改的学生id：";
+		cin >> data.id;
+		deletelist(list, data.id);
+
+		string sql_id = data.id;
+		string sql_de = "delete from student where id = '" + sql_id + "'";
+		mysql_query(&mysql, sql_de.c_str());
+
+		cout << "请重新输入学生证,姓名，性别，入学年龄，入学年份，班级:" << endl;
+		fflush(stdin);/*清空缓冲区*/
+		cin >> data.id >> data.name >> data.sex >> data.intoschool_age >> data.intoschool_year >> data.cls;
+		insertnode(list, data);
+		string sql_newid = data.id;
+		string sql_name = data.name;
+		string sql_sex = data.sex;
+		string sql_intoschool_age = data.intoschool_age;
+		string sql_intoschool_year = data.intoschool_year;
+		string sql_cls = data.cls;
+		string sqltext = "insert into student(id,sname,sex,intoschool_age,intoschool_year,class) values('" + sql_newid + "','" + sql_name + "','" + sql_sex + "','" + sql_intoschool_age + "','" + sql_intoschool_year + "','" + sql_cls + "');";//主键相同，避免重复
+		mysql_query(&mysql, sqltext.c_str());
+		writefile(list, "student.txt");
+		cout << "修改成功" << endl;
+		break;
+	}
+	case 5:
+		cout << "退出" << endl;
+		exit(0);
+		break;
+	default:
+		cout << "选择错误，重新输入" << endl;
+		break;
+	}
+	clearstudentlist(list);
+}
+
+
+
